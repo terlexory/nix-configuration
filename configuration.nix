@@ -46,7 +46,39 @@
 
   # Set your time zone.
   time.timeZone = "Europe/Bucharest";
+  
+  fonts = {
+   enableDefaultPackages = true;
+   packages = with pkgs; [
+     noto-fonts
+     noto-fonts-cjk-sans
+     noto-fonts-color-emoji
+     liberation_ttf
+     dejavu_fonts
+     font-awesome     # covers icon glyphs some UIs use in tabs/search bar
+     nerd-fonts.fira-code
+     nerd-fonts.noto
+     nerd-fonts.droid-sans-mono
+     nerd-fonts.hack
+     nerd-fonts.ubuntu
+     nerd-fonts.jetbrains-mono
+   ];
+   fontconfig.defaultFonts = {
+     serif = [ "Noto Serif" ];
+     sansSerif = [ "Noto Sans" ];
+     monospace = [ "DejaVu Sans Mono" ];
+   };
+  };
 
+  programs.nix-ld.enable = true;
+
+
+  programs.dconf.enable = true;
+
+  environment.sessionVariables = {
+    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/gsettings-desktop-schemas-${pkgs.gsettings-desktop-schemas.version}/glib-2.0/schemas";
+  };
+  
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -95,6 +127,8 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+  
+  virtualisation.docker.enable = true;
 
   hardware.enableRedistributableFirmware = true;
   hardware.enableAllFirmware = true; # broader, unfree firmware included
@@ -124,19 +158,11 @@
   users.users.victor = {
     isNormalUser = true;
     description = "Victor";
-    extraGroups = [ "wheel" "libvirtd" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "libvirtd" "docker" ]; # Enable ‘sudo’ for the user.
   };
 
   programs.firefox.enable = true;
-
-  fonts.packages = with pkgs; [
-    nerd-fonts.fira-code
-    nerd-fonts.noto
-    nerd-fonts.droid-sans-mono
-    nerd-fonts.hack
-    nerd-fonts.ubuntu
-    nerd-fonts.jetbrains-mono
-  ]; 
+  programs.xwayland.enable = true; 
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -170,6 +196,17 @@
     dnsmasq
     noctalia-shell
     nautilus
+    lmstudio
+    nodejs
+    ncdu
+    gnome-disk-utility
+    hollywood
+    cmatrix
+    krita
+    gsettings-desktop-schemas
+    adwaita-icon-theme
+    hicolor-icon-theme
+    glib
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
