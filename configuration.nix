@@ -71,7 +71,8 @@
   };
 
   programs.nix-ld.enable = true;
-
+  programs.appimage.enable = true;
+  programs.appimage.binfmt = true;
 
   programs.dconf.enable = true;
 
@@ -104,6 +105,20 @@
       };
     };
   };
+
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+
+  security.polkit.enable = true;
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+	if (action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+            action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+            action.id == "org.freedesktop.udisks2.filesystem-unmount-others") {
+	    return polkit.Result.AUTH_ADMIN;
+	}
+    });
+  '';
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -158,7 +173,7 @@
   users.users.victor = {
     isNormalUser = true;
     description = "Victor";
-    extraGroups = [ "wheel" "libvirtd" "docker" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "libvirtd" "docker" "audio" "video" "render" "input" "netdev" ]; # Enable ‘sudo’ for the user.
   };
 
   programs.firefox.enable = true;
@@ -202,11 +217,23 @@
     gnome-disk-utility
     hollywood
     cmatrix
-    krita
     gsettings-desktop-schemas
     adwaita-icon-theme
     hicolor-icon-theme
     glib
+    p7zip
+    electrum
+    grim
+    slurp
+    satty
+    gimp
+    papirus-icon-theme
+    adwaita-icon-theme
+    hicolor-icon-theme
+    yaru-theme
+    kdePackages.kdenlive
+    easyeffects
+    dmidecode
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
